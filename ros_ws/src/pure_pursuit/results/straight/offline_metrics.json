@@ -1,0 +1,11 @@
+{
+  "error_definition": "Euclidean distance to nearest path segment, all samples",
+  "samples": 254,
+  "mean_error": 0.00040423384335129184,
+  "rmse": 0.00042671159126045344,
+  "max_error": 0.0006216143851993913,
+  "min_x": 4.999344494545019,
+  "max_x": 6.97858930081921,
+  "min_y": 4.993389791898736,
+  "max_y": 4.9993178932225595
+}

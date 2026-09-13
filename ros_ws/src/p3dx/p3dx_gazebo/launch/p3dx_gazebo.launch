@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="world_name" default="$(find my_worlds)/worlds/tube_world.world"/>
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <arg name="initial_pose_x" default="5.0"/>
+  <arg name="initial_pose_y" default="5.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(find my_worlds)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+
+  <node name="gazebo" pkg="gazebo_ros" type="gzserver" args="$(arg world_name)" respawn="false" output="screen">
+    <param name="use_sim_time" value="$(arg use_sim_time)"/>
+  </node>
+
+  <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" if="$(arg gui)"/>
+
+  <include file="$(find p3dx_gazebo)/launch/spawn_p3dx.launch">
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)" />
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)" />
+    <arg name="initial_pose_a" value="$(arg initial_pose_a)" />
+  </include>
+
+</launch>

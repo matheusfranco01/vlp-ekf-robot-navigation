@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ROS / catkin
+build/
+devel/
+install/
+log/
+logs/
+.catkin_tools/
+
+# ROS runtime
+*.bag
+*.bag.active
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log

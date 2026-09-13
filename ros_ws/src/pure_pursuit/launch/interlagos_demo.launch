@@ -1,0 +1,11 @@
+<launch>
+  <arg name="gui" default="false"/>
+  <!-- Start aligned with the first resampled segment of publish_interlagos.py. -->
+  <include file="$(find pure_pursuit)/launch/simulation.launch">
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="initial_pose_x" value="2.136593287621797"/>
+    <arg name="initial_pose_y" value="1.633511093818246"/>
+    <arg name="initial_pose_a" value="-0.278154029745105"/>
+  </include>
+  <!-- Control is started separately by validate_simulation.py after runtime checks. -->
+</launch>

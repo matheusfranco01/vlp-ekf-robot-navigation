@@ -1,0 +1,10 @@
+<launch>
+  <arg name="path_kind" default="straight"/>
+  <!-- Only use after verifying /gazebo is the sole command subscriber. -->
+  <include file="$(find pure_pursuit)/launch/pure_pursuit.launch">
+    <arg name="cmd_vel_topic" value="/RosAria/cmd_vel"/>
+  </include>
+  <include if="$(eval arg('path_kind') == 'straight')" file="$(find pure_pursuit)/launch/test_path.launch"/>
+  <node if="$(eval arg('path_kind') == 'interlagos')" pkg="pure_pursuit"
+        type="publish_interlagos.py" name="publish_interlagos" output="screen"/>
+</launch>

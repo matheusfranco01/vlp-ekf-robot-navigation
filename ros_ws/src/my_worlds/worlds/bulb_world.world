@@ -1,0 +1,155 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="vlp_room_world">
+    
+    <!-- Restrict ambient illumination to isolate VLP emitting sources -->
+    <scene>
+      <ambient>1  1  1 1</ambient>
+      <background>0 0 0 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <!-- Room Envelope Without Walls (5m x 5m x 3m) -->
+    <model name="room_5x5x3">
+      <static>true</static>
+      <pose>2.5 2.5 0 0 0 0</pose>
+      <link name="structure">
+        <!-- Ceiling and Floor -->
+        <visual name="ceiling_visual">
+          <pose>0 0 3.01 0 0 0</pose>
+          <geometry><box><size>5 5 0.02</size></box></geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <collision name="ceiling_collision">
+          <pose>0 0 3.01 0 0 0</pose>
+          <geometry><box><size>5 5 0.02</size></box></geometry>
+        </collision>
+
+        <visual name="floor_visual">
+          <pose>0 0 -0.01 0 0 0</pose>
+          <geometry><box><size>5 5 0.02</size></box></geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <collision name="floor_collision">
+          <pose>0 0 -0.01 0 0 0</pose>
+          <geometry><box><size>5 5 0.02</size></box></geometry>
+        </collision>
+
+        <!-- Boundary walls to show limits (50 cm height) -->
+        <visual name="boundary_north_visual">
+          <pose>2.49 0 0.25 0 0 0</pose>
+          <geometry><box><size>0.02 5 0.5</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient></material>
+        </visual>
+        <collision name="boundary_north_collision">
+          <pose>2.49 0 0.25 0 0 0</pose>
+          <geometry><box><size>0.02 5 0.5</size></box></geometry>
+        </collision>
+
+        <visual name="boundary_south_visual">
+          <pose>-2.49 0 0.25 0 0 0</pose>
+          <geometry><box><size>0.02 5 0.5</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient></material>
+        </visual>
+        <collision name="boundary_south_collision">
+          <pose>-2.49 0 0.25 0 0 0</pose>
+          <geometry><box><size>0.02 5 0.5</size></box></geometry>
+        </collision>
+
+        <visual name="boundary_east_visual">
+          <pose>0 2.49 0.25 0 0 0</pose>
+          <geometry><box><size>5 0.02 0.5</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient></material>
+        </visual>
+        <collision name="boundary_east_collision">
+          <pose>0 2.49 0.25 0 0 0</pose>
+          <geometry><box><size>5 0.02 0.5</size></box></geometry>
+        </collision>
+
+        <visual name="boundary_west_visual">
+          <pose>0 -2.49 0.25 0 0 0</pose>
+          <geometry><box><size>5 0.02 0.5</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient></material>
+        </visual>
+        <collision name="boundary_west_collision">
+          <pose>0 -2.49 0.25 0 0 0</pose>
+          <geometry><box><size>5 0.02 0.5</size></box></geometry>
+        </collision>
+
+        <!-- Grid plane aligned with the floor top surface -->
+        <visual name="grid_visual">
+          <pose>0 0 0.001 0 0 0</pose>
+          <geometry><plane><normal>0 0 1</normal><size>5 5</size></plane></geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/GrayGrid</name>
+            </script>
+          </material>
+        </visual>
+
+      </link>
+    </model>
+
+    <include>
+        <name>luminaire_1</name>
+        <uri>model://ledBulb</uri>
+        <pose>1.0 1.0 3.0 0 0 0</pose>
+      </include>
+
+      <include>
+        <name>luminaire_2</name>
+        <uri>model://ledBulb</uri>
+        <pose>2.5 1.0 3.0 0 0 0</pose>
+      </include>
+
+      <include>
+        <name>luminaire_3</name>
+        <uri>model://ledBulb</uri>
+        <pose>4.0 1.0 3.0 0 0 0</pose>
+      </include>
+
+      <include>
+        <name>luminaire_4</name>
+        <uri>model://ledBulb</uri>
+        <pose>1.0 2.5 3.0 0 0 0</pose>
+      </include>
+
+      <include>
+        <name>luminaire_5</name>
+        <uri>model://ledBulb</uri>
+        <pose>2.5 2.5 3.0 0 0 0</pose>
+      </include>
+
+      <include>
+        <name>luminaire_6</name>
+        <uri>model://ledBulb</uri>
+        <pose>4.0 2.5 3.0 0 0 0</pose>
+      </include>
+
+      <include>
+        <name>luminaire_7</name>
+        <uri>model://ledBulb</uri>
+        <pose>1.0 4.0 3.0 0 0 0</pose>
+      </include>
+
+      <include>
+        <name>luminaire_8</name>
+        <uri>model://ledBulb</uri>
+        <pose>2.5 4.0 3.0 0 0 0</pose>
+      </include>
+
+      <include>
+        <name>luminaire_9</name>
+        <uri>model://ledBulb</uri>
+        <pose>4.0 4.0 3.0 0 0 0</pose>
+      </include>
+
+  </world>
+</sdf>

@@ -1,0 +1,8 @@
+<launch>
+  <include file="$(find pure_pursuit)/launch/pure_pursuit.launch">
+    <arg name="pose_topic" value="/pure_pursuit_test/odom"/>
+    <arg name="path_topic" value="/pure_pursuit_test/path"/>
+    <arg name="cmd_vel_topic" value="/pure_pursuit_test/cmd_vel"/>
+  </include>
+  <test test-name="pure_pursuit_checks" pkg="pure_pursuit" type="test_pure_pursuit.py" time-limit="40"/>
+</launch>

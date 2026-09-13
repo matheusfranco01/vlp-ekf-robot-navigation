@@ -1,0 +1,43 @@
+{
+  "before": {
+    "publishers": [],
+    "subscribers": [
+      "/gazebo"
+    ],
+    "controllers": {
+      "p3dx_joint_publisher": "running",
+      "RosAria": "running"
+    }
+  },
+  "success": true,
+  "during": {
+    "publishers": [
+      "/pure_pursuit"
+    ],
+    "subscribers": [
+      "/gazebo",
+      "/pure_pursuit_recorder"
+    ],
+    "controllers": {
+      "p3dx_joint_publisher": "running",
+      "RosAria": "running"
+    }
+  },
+  "initial": [
+    4.99935116151977,
+    4.9993178932225595
+  ],
+  "final": [
+    6.978470448170173,
+    4.993389791898736
+  ],
+  "distance": 1.9794703489498153,
+  "mean_error": 0.023647140706156394,
+  "rmse": 0.026990096373342175,
+  "max_error": 0.048678120263508304,
+  "max_linear_command": 0.2,
+  "max_angular_command": 0.0007433604553501391,
+  "max_actual_speed": 0.20007515467297748,
+  "stop_hold_seconds": 3,
+  "goal_error": 0.0208845069973729
+}

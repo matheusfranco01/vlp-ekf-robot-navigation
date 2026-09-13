@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="ledBulb">
+    <static>true</static>
+    <link name="lamp">
+      <!-- Socket Visual -->
+      <visual name="socket_visual">
+        <pose>0 0 -0.04 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.045</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Bulb Visual (Sphere) -->
+      <visual name="bulb_visual">
+        <pose>0 0 -0.12 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.06</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 1 0.8 1</ambient>
+          <diffuse>1 1 0.9 1</diffuse>
+          <emissive>1 1 0.5 1</emissive>
+        </material>
+      </visual>
+
+      <!-- Point Light Source -->
+      <light name="led_light" type="point">
+        <pose>0 0 -0.12 0 0 0</pose>
+        <diffuse>1 1 1 1</diffuse>
+        <specular>1 1 1 1</specular>
+        <attenuation>
+          <range>12</range>
+          <constant>0.4</constant>
+          <linear>0.02</linear>
+          <quadratic>0.002</quadratic>
+        </attenuation>
+        <cast_shadows>true</cast_shadows>
+      </light>
+    </link>
+  </model>
+</sdf>

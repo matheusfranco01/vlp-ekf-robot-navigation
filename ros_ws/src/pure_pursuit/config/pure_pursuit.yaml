@@ -1,0 +1,6 @@
+look_ahead_distance: 0.7
+linear_speed: 0.2
+max_angular_speed: 1.0
+goal_tolerance: 0.1
+control_rate: 20.0
+pose_timeout: 0.5

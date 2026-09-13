@@ -1,0 +1,33 @@
+frequency: 50.0 
+sensor_timeout: 0.1 
+two_d_mode: true 
+publish_tf: true
+
+print_diagnostics: true
+
+map_frame: map
+odom_frame: odom
+base_link_frame: base_link
+world_frame: map
+
+# Odometria 
+odom0: /RosAria/odom_
+
+# Usar apenas  velocidade linear em X e velocidade angular em Z, ignorando o resto
+odom0_config: [false, false, false, 
+               false, false, false, 
+               true,  false, false, 
+               false, false, true,  
+               false, false, false] 
+odom0_differential: false
+odom0_relative: false
+
+# VLP
+pose0: /ann_pose
+pose0_config: [true,  true,  false, # X, Y, Z posição
+               false, false, false, # Roll, Pitch, Yaw absolutos
+               false, false, false, # X vel, Y vel, Z vel
+               false, false, false, # Roll vel, Pitch vel, Yaw vel
+               false, false, false] # Acelerações
+pose0_differential: false
+pose0_relative: false

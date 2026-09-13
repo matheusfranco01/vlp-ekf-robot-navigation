@@ -1,0 +1,17 @@
+<launch>
+    <arg name="initial_pose_x" default="5"/>
+    <arg name="initial_pose_y" default="5"/>
+    <arg name="initial_pose_a" default="0"/>
+
+    <include file="$(find p3dx_gazebo)/launch/spawn_p3dx.launch">
+        <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+        <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+        <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+    </include>
+
+    <include file="$(find nav)/launch/localization.launch" />
+
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_twist_keyboard" output="screen" launch-prefix="xterm -e">
+        <remap from="cmd_vel" to="RosAria/cmd_vel" />
+    </node>
+</launch>

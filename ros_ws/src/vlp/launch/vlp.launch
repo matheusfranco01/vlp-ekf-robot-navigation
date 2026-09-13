@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="enable_estimator" default="true"/>
+  <arg name="enable_ann" default="true"/>
+  <arg name="ground_truth_topic" default="/base_pose_ground_truth"/>
+  <arg name="iluminance_topic" default="/estimated_illuminance"/>
+  <arg name="ann_position_topic" default="/ann_position"/>
+  <arg name="ann_pose_topic" default="/ann_pose"/>
+
+  <group if="$(arg enable_estimator)">
+    <node pkg="vlp" type="vlp.py" name="estimator_node" output="screen">
+      <param name="ground_truth_topic" value="$(arg ground_truth_topic)"/>
+    </node>
+  </group>
+
+  <group if="$(arg enable_ann)">
+    <node pkg="vlp" type="ann.py" name="ann_node" output="screen">
+      <param name="iluminance_topic" value="$(arg iluminance_topic)"/>
+      <remap from="/ann_position" to="$(arg ann_position_topic)"/>
+      <remap from="/ann_pose" to="$(arg ann_pose_topic)"/>
+    </node>
+  </group>
+
+</launch>

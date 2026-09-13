@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="ledTube">
+    <static>true</static>
+    <link name="base_link">
+      <!-- Main tube as rectangle box -->
+      <visual name="tube_visual">
+        <geometry>
+          <box>
+            <size>0.30 0.15  1.505</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1.0</ambient>
+          <diffuse>0.9 0.9 0.9 1.0</diffuse>
+          <specular>0.9 0.9 0.9 1.0</specular>
+        </material>
+      </visual>
+      
+      <!-- Collision for main tube -->
+      <collision name="tube_collision">
+        <geometry>
+          <box>
+            <size> 0.30 0.15  1.505</size>
+          </box>
+        </geometry>
+      </collision>
+      
+      <!-- Inertia properties -->
+      <inertial>
+        <mass>5.0</mass>
+        <inertia>
+          <ixx>0.5</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.5</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.1</izz>
+        </inertia>
+      </inertial>
+    </link>
+  </model>
+</sdf>

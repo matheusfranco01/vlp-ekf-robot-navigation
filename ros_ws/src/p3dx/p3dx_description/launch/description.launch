@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_namespace" default="/"/>
+
+  <arg name="initial_pose_x" default="0.0"/>
+  <arg name="initial_pose_y" default="0.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro '$(find p3dx_description)/urdf/p3dx/pioneer3dx.xacro'
+    robot_namespace:=$(arg robot_namespace) 
+    initial_pose_x:=$(arg initial_pose_x) 
+    initial_pose_y:=$(arg initial_pose_y) 
+    initial_pose_a:=$(arg initial_pose_a)" />
+
+</launch>

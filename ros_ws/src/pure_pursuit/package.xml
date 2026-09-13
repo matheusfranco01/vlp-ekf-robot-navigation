@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>pure_pursuit</name>
+  <version>0.1.0</version>
+  <description>Differential-drive Pure Pursuit path tracking controller for ROS.</description>
+  <maintainer email="matheusfrancojf@gmail.com">Matheus Franco</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>std_msgs</depend>
+  <exec_depend>controller_manager_msgs</exec_depend>
+  <exec_depend>rosgraph</exec_depend>
+  <exec_depend>roslaunch</exec_depend>
+  <exec_depend>p3dx_gazebo</exec_depend>
+  <test_depend>rostest</test_depend>
+  <test_depend>rospkg</test_depend>
+</package>

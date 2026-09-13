@@ -1,0 +1,62 @@
+diff --git a/p3dx_control/config/control.yaml b/p3dx_control/config/control.yaml
+index 7089bde..05710a5 100644
+--- a/p3dx_control/config/control.yaml
++++ b/p3dx_control/config/control.yaml
+@@ -13,7 +13,7 @@ RosAria:
+   velocity_rolling_window_size: 2
+ 
+   # Base frame_id
+-  base_frame_id: base_link
++  base_frame_id: base_link_d
+ 
+   # Wheel separation and diameter. These are both optional.
+   # diff_drive_controller will attempt to read either one or both from the
+diff --git a/p3dx_control/launch/control.launch b/p3dx_control/launch/control.launch
+index bd8fffa..4b47ec2 100644
+--- a/p3dx_control/launch/control.launch
++++ b/p3dx_control/launch/control.launch
+@@ -7,7 +7,7 @@
+ 
+   <rosparam command="load" file="$(find p3dx_control)/config/control.yaml" />
+ 
+-<node name="base_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--wait p3dx_joint_publisher RosAria">
++<node name="base_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="p3dx_joint_publisher RosAria">
+   </node>
+ 
+   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+diff --git a/p3dx_control/scripts/odom_shifter.py b/p3dx_control/scripts/odom_shifter.py
+old mode 100755
+new mode 100644
+diff --git a/p3dx_description/urdf/p3dx/pioneer3dx.xacro b/p3dx_description/urdf/p3dx/pioneer3dx.xacro
+index e0e4741..ce18366 100644
+--- a/p3dx_description/urdf/p3dx/pioneer3dx.xacro
++++ b/p3dx_description/urdf/p3dx/pioneer3dx.xacro
+@@ -2,6 +2,7 @@
+ <robot xmlns:xacro="http://wiki.ros.org/xacro" name="pioneer3dx">
+ 
+   <xacro:property name="M_PI" value="3.1415926535897931" />
++  <xacro:arg name="robot_namespace" default="p3dx"/>
+ 
+   <!-- Import Rviz colors -->
+   <xacro:include filename="$(find p3dx_description)/urdf/materials.xacro" />
+diff --git a/p3dx_gazebo/launch/spawn_p3dx.launch b/p3dx_gazebo/launch/spawn_p3dx.launch
+index 8924490..653a617 100644
+--- a/p3dx_gazebo/launch/spawn_p3dx.launch
++++ b/p3dx_gazebo/launch/spawn_p3dx.launch
+@@ -28,13 +28,12 @@
+ 
+  <node name="spawn_p3dx_model" pkg="gazebo_ros" type="spawn_model" 
+         output="screen"
+-        launch-prefix="bash -c 'sleep 3; exec \"$@\"' _"
++        launch-prefix="bash -c 'sleep 3; exec $@' _"
+         args="-x $(arg initial_pose_x)
+               -y $(arg initial_pose_y)
+               -Y $(arg initial_pose_a)
+               -urdf
+               -param robot_description
+-              -model p3dx
+-              -pose p3dx_initial_pose" />
++              -model p3dx" />
+ 
+ </launch>
+\ No newline at end of file

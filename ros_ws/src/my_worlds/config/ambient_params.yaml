@@ -1,0 +1,22 @@
+# Global settings for the VLP simulation environment
+simulation_environment:
+  ros__parameters:
+    room:
+      dimensions: [10.0, 10.0, 5.0] 
+      workbench_height: 0.0        
+    
+    luminaires:
+      quantity: 12
+      positions:
+        led_1: [2.0, 2.5, 4.8]
+        led_2: [4.0, 2.5, 4.8]
+        led_3: [6.0, 2.5, 4.8]
+        led_4: [8.0, 2.5, 4.8]
+        led_5: [2.0, 5.0, 4.8]
+        led_6: [4.0, 5.0, 4.8]
+        led_7: [6.0, 5.0, 4.8]
+        led_8: [8.0, 5.0, 4.8]
+        led_9: [2.0, 7.5, 4.8]
+        led_10: [4.0, 7.5, 4.8]
+        led_11: [6.0, 7.5, 4.8]
+        led_12: [8.0, 7.5, 4.8]

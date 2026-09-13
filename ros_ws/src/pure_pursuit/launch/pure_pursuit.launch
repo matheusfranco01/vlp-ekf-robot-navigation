@@ -1,0 +1,11 @@
+<launch>
+  <arg name="pose_topic" default="/base_pose_ground_truth"/>
+  <arg name="path_topic" default="/navigation/test_path"/>
+  <arg name="cmd_vel_topic" default="/navigation/pure_pursuit_cmd_vel"/>
+  <node pkg="pure_pursuit" type="pure_pursuit_node.py" name="pure_pursuit" output="screen">
+    <rosparam command="load" file="$(find pure_pursuit)/config/pure_pursuit.yaml"/>
+    <param name="pose_topic" value="$(arg pose_topic)"/>
+    <param name="path_topic" value="$(arg path_topic)"/>
+    <param name="cmd_vel_topic" value="$(arg cmd_vel_topic)"/>
+  </node>
+</launch>

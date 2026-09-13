@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="initial_pose_x" default="0.0"/>
+  <arg name="initial_pose_y" default="0.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+
+  <rosparam command="load" file="$(find p3dx_control)/config/control.yaml" />
+
+<node name="base_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="p3dx_joint_publisher RosAria">
+  </node>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <node pkg="fake_localization" type="fake_localization" name="fake_localization" output="screen">
+    <param name="delta_x" value="0.0" />
+    <param name="delta_y" value="0.0" />
+    <param name="delta_yaw" value="0.0" />
+    
+    <param name="global_frame_id" value="map"/>
+    <param name="odom_frame_id" value="odom"/>
+    <param name="base_frame_id" value="base_link" />
+
+    <remap from="base_pose_ground_truth" to="/base_pose_ground_truth"/>
+  </node>
+
+</launch>
