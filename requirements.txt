@@ -1,0 +1,39 @@
+# requirements.txt — non-ROS Python dependencies for vlp-ekf-robot-navigation
+#
+# Scope: only packages that must be installed via pip. ROS-provided Python
+# packages (rospy, rospkg, rostest, message_filters, tf) come from the ROS
+# Noetic apt installation / your catkin workspace and are intentionally NOT
+# listed here — pip-installing them would conflict with the ROS environment.
+#
+# Versions below are pinned to the last releases that ship official Linux
+# wheels for BOTH Python 3.8 (ROS Noetic's official target, Ubuntu 20.04)
+# and Python 3.10 (Ubuntu 22.04 / WSL2, your current environment per the
+# screenshots). This was checked against PyPI's release metadata, not
+# assumed.
+#
+# [EVIDENCE NEEDED] These versions have not been installed and exercised
+# end-to-end against this repository's code in your actual ROS Noetic
+# container. Before treating this file as final, run:
+#   pip install -r requirements.txt --break-system-packages
+#   roslaunch nav localization.launch
+# and confirm ann.py loads models/model_RNA.pickle and produces /ann_pose
+# without error. If you need to change a version to fix a conflict with
+# an apt-installed package (python3-numpy, python3-scipy, python3-matplotlib
+# are commonly preinstalled system-wide on ROS Noetic images), re-pin here
+# and note why, so the next person does not have to rediscover it.
+
+# --- vlp/scripts/ann.py: loads and runs the trained MLP pose estimator ---
+torch==2.4.1
+
+# --- vlp/scripts/vlp.py, estimator/*.py: signal generation and math ---
+numpy==1.24.4
+
+# --- vlp/scripts/estimator/fft.py: FFT demodulation of the VLC signal ---
+scipy==1.9.3
+
+# --- nav/scripts/analysis.py, nav/scripts/plot.py,
+#     pure_pursuit/scripts/plot_results.py: result plotting ---
+# plot_results.py already handles a missing matplotlib gracefully
+# (raises a clear SystemExit instead of crashing); analysis.py and plot.py
+# do not, so this dependency is required for those two scripts.
+matplotlib==3.7.5
