@@ -375,10 +375,3 @@ GitHub: [@matheusfranco01](https://github.com/matheusfranco01)
 > R. C. Coulter, *Implementation of the Pure Pursuit Path Tracking
 > Algorithm*, Carnegie Mellon University, 1992.
 
-> **[EVIDENCE NEEDED]** These are foundational/general references for each
-> technique used in the project, not necessarily the exact sources
-> consulted during development. If specific papers guided a design choice
-> (e.g. the modulation-frequency scheme per luminaire, the ANN
-> architecture, or particular EKF tuning choices), add them here
-> specifically — a reader evaluating this project for research fit will
-> look for that traceability.
