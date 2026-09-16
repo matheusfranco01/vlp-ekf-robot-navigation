@@ -257,7 +257,7 @@ Keeping these subsystems modular is intentional:
 - EKF integration can then be evaluated without changing the controller mathematics;
 - the same trajectory and metrics can be reused for fair comparisons.
 
-The final end-to-end target is:
+The end-to-end pipeline demonstrated in Experiment C is:
 
 ```text
 VLP neural network
@@ -516,7 +516,9 @@ under **ground-truth pose feedback**.
 
 They do **not** yet represent the localization accuracy of the complete VLP-EKF system.
 
-The important next experiment is:
+Experiment C has now demonstrated fused-pose feedback in simulation; see the
+[root results](../../../README.md#experiment-c--closed-loop-pure-pursuit-using-vlpekf).
+A repeated statistical comparison remains future work:
 
 ```text
 Ground-truth pose feedback
@@ -532,7 +534,7 @@ using:
 - the same speed;
 - the same performance metrics.
 
-This experiment will quantify how well the proposed localization system supports closed-loop navigation.
+The accepted Experiment C runs quantify closed-loop tracking and localization separately; they are not a repeated statistical comparison with this baseline.
 
 ---
 
@@ -669,29 +671,12 @@ source /tmp/pure_pursuit_devel/setup.bash
 
 ## P3DX Integration Patch
 
-The external P3DX repository is not vendored here.
-
-The validated local integration changes are preserved in:
-
-```text
-patches/p3dx_control.patch
-```
-
-Check compatibility before applying:
-
-```bash
-git -C src/p3dx apply --check ../pure_pursuit/patches/p3dx_control.patch
-```
-
-Apply:
-
-```bash
-git -C src/p3dx apply ../pure_pursuit/patches/p3dx_control.patch
-```
-
-The patch preserves the P3DX-side configuration required by the validated simulation, including the controller-spawner behavior and base-frame adjustment.
-
-Third-party code remains subject to its original license.
+P3DX is vendored in this repository at `../p3dx`; the functional integration
+changes are applied directly. **Do not apply** the historical
+`patches/p3dx_control.patch` to this checkout. The patch is retained pending review,
+including its obsolete executable-mode change; no script requires it. Original
+third-party attribution is preserved. The Experiment C launch additionally passes
+`enable_fake_localization=false` without changing other launch defaults.
 
 ---
 
@@ -849,43 +834,26 @@ The current Pure Pursuit baseline:
 
 ---
 
-## Next Research Milestone
+## Experiment C — Closed Loop Completed
 
-The next major experiment is:
+Three accepted Gazebo runs used `/odometry/filtered` from VLP+EKF to follow the
+Interlagos circuit. Tracking RMSE was **10.535 ± 0.452 cm** and localization RMSE
+was **12.853 ± 0.329 cm**, using sample standard deviation across runs. Four
+complete laps were performed at 10 Hz: one additional lap was rejected because
+of a 3.3 s ANN gap. This does not demonstrate dropout robustness or hardware
+validation. ANN provides x/y, not absolute heading; the EKF uses a fixed spawn
+yaw prior and wheel odometry, with no direct ground-truth pose input.
 
-```text
-Visible-light observations
-        ↓
-Neural network
-        ↓
-VLP global position
-        │
-        ├────► EKF ◄──── wheel odometry
-        │
-        ▼
-fused pose
-        ↓
-Pure Pursuit
-        ↓
-P3DX
-```
-
-Run the same closed trajectory and compare against the ground-truth baseline using:
-
-- VLP position error;
-- fused-pose error;
-- path-tracking mean error;
-- RMSE;
-- maximum error;
-- final-position error;
-- lap completion;
-- robustness over repeated trials.
+See the [root README](../../../README.md) for architecture, acceptance criteria,
+limitations and reproducible commands, and the
+[official aggregate](results/closed_loop/validated_10hz/aggregate_summary.json).
+The historical ground-truth baseline above remains Experiment A.
 
 ---
 
 ## Future Work
 
-- complete end-to-end VLP + EKF + Pure Pursuit validation;
+- extend the completed simulation experiment to more conditions and hardware;
 - quantify wheel-odometry drift with and without VLP correction;
 - evaluate VLP error across the full map;
 - document and evaluate the neural-network architecture and dataset;
@@ -894,7 +862,7 @@ Run the same closed trajectory and compare against the ground-truth baseline usi
 - evaluate measurement dropout and recovery;
 - compare multiple look-ahead strategies;
 - add curvature-adaptive velocity control;
-- perform repeated-run statistics;
+- extend repeated-run statistics to additional trajectories and the A/B baselines;
 - compare against alternative localization approaches;
 - validate the architecture on physical hardware.
 
@@ -989,9 +957,9 @@ The final academic version of this repository should also include the VLP, neura
 | Pure Pursuit — straight path | ✅ Validated |
 | Pure Pursuit — closed benchmark | ✅ Validated |
 | Runtime validation and logging | ✅ Validated |
-| VLP neural-network localization | 🧪 Developed in broader workspace / under evaluation |
-| VLP + wheel-odometry EKF fusion | 🧪 Integration/evaluation stage |
-| Pure Pursuit with fused VLP-EKF pose | 🔜 Next major experiment |
+| VLP neural-network localization | Evaluated through the fused Experiment C result; standalone accuracy not established |
+| VLP + wheel-odometry EKF fusion | Demonstrated in simulation, Experiment C |
+| Pure Pursuit with fused VLP-EKF pose | Three accepted simulation runs, Experiment C |
 | Physical P3DX validation | 🔜 Future work |
 
 ---

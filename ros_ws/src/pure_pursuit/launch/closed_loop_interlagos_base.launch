@@ -1,0 +1,39 @@
+<launch>
+  <!-- Closed-loop Interlagos experiment:
+       Gazebo + P3DX + VLP + ANN + EKF + reference path.
+       Pure Pursuit is intentionally launched separately. -->
+
+  <arg name="gui" default="false"/>
+
+  <arg name="initial_pose_x" default="2.136593"/>
+  <arg name="initial_pose_y" default="1.633511"/>
+  <arg name="initial_pose_a" default="-0.278154"/>
+
+  <param name="/use_sim_time" value="true"/>
+
+  <!-- Gazebo world + Pioneer 3-DX -->
+  <include file="$(find p3dx_gazebo)/launch/p3dx_gazebo.launch">
+    <arg name="enable_fake_localization" value="false"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+    <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+  </include>
+
+  <!-- VLP + ANN + EKF -->
+  <include file="$(find nav)/launch/localization.launch"/>
+  <!-- Match the wheel odometry child frame. Fuse only its body-frame twist;
+       odom_shifter's offset pose is not an absolute EKF measurement. -->
+  <param name="/ekf_se/base_link_frame" value="base_link_d"/>
+  <!-- Match the 10 Hz wheel odometry/TF source without extrapolating TF. -->
+  <param name="/ekf_se/frequency" value="10"/>
+  <!-- Fixed experimental spawn prior, never updated from ground truth.
+       State order: x y z roll pitch yaw vx vy vz vroll vpitch vyaw ax ay az. -->
+  <rosparam param="/ekf_se/initial_state" subst_value="true">[$(arg initial_pose_x), $(arg initial_pose_y), 0, 0, 0, $(arg initial_pose_a), 0, 0, 0, 0, 0, 0, 0, 0, 0]</rosparam>
+
+  <!-- Interlagos reference trajectory -->
+  <node pkg="pure_pursuit"
+        type="publish_interlagos.py"
+        name="interlagos_path_publisher"
+        output="screen"/>
+</launch>

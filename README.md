@@ -13,59 +13,58 @@ an **ANN-based pose estimator**, **wheel odometry**, **EKF sensor fusion**
 
 ---
 
-## Project Status — read this first
+## Project Status
 
-This project is composed of independent, individually-validated subsystems.
-As of this release, they have **not yet been combined into a single
-closed-loop experiment**. Please read this table before the rest of the
-README:
+**Closed-loop VLP/EKF-based navigation was demonstrated in simulation.**
+Experiment C used `/odometry/filtered` to control the P3DX along the Interlagos
+circuit. Three runs passed the predefined integrity and physical-completion
+criteria and form the aggregate below. One additional complete lap in the final
+10 Hz configuration was rejected because of a 3.3 s ANN data gap.
 
-| Subsystem | Status | Validated how |
+| Experiment | Scope | Evidence |
 |---|---|---|
-| Pure Pursuit controller (P3DX, Gazebo) | ✅ Validated | Closed-loop tracking against **Gazebo ground truth** pose (straight line + closed circuit) |
-| VLP physical simulation (Radiance ray-tracing + per-luminaire modulation + FFT demodulation) | ✅ Implemented | Runs online in Gazebo, publishes `/estimated_illuminance` |
-| ANN pose estimator (PyTorch MLP, trained weights included) | ✅ Implemented | Runs online, publishes `/ann_pose` |
-| EKF fusion (`robot_localization`, wheel-odometry velocity + ANN/VLP position) | ✅ Implemented and measured | Compared against Gazebo ground truth under **manual teleoperation** — see [Experiments](#experiments--results) |
-| **Pure Pursuit driven by the fused VLP+EKF pose** (i.e. the full closed loop: VLP → EKF → Pure Pursuit → P3DX) | 🔜 **Not yet done** | This is the next milestone — see [Next Milestone](#next-milestone) |
+| A | Pure Pursuit using Gazebo ground truth | Historical straight-path and circuit baseline |
+| B | VLP+EKF localization under manual teleoperation | Historical localization-only measurements |
+| C | Closed-loop Pure Pursuit using VLP+EKF | Three accepted runs, with per-run metrics, provenance and plots |
 
-**In short:** the localization stack (VLP+EKF) and the control stack (Pure
-Pursuit) have each been validated on their own, against ground truth, but
-**not yet together**. Any claim of "autonomous VLP-based navigation" would be
-premature until that integration experiment exists. This README describes
-exactly what has been measured, and separately, what is still planned.
-
----
+Results are simulation-only; no physical-hardware validation is claimed.
 
 ## System Overview
 
 ```text
-Visible-light measurements (Radiance ray-tracing, per-luminaire modulation)
-          |
-          v
-   FFT demodulation
-          |
-          v
-   ANN pose estimator (PyTorch MLP)
-          |
-      /ann_pose
-          |
-          +-------------------------+
-                                     |
-Wheel odometry (/RosAria/odom) ------+----> EKF (robot_localization) ----> /odometry/filtered
-                                                                                  |
-                                                                                  v
-                                                                    [NOT YET CONNECTED]
-                                                                                  |
-                                                                                  v
-                                                                           Pure Pursuit
-                                                                                  |
-                                                                                  v
-                                                                            Pioneer 3-DX
+Gazebo / ground truth
+    +--> VLP/Radiance sensor simulator: synthesize illuminance measurements
+    +--> Offline evaluation and experimental safety observer
+    X    No direct pose input to EKF or Pure Pursuit
+
+Radiance/VLP --> ANN --> /ann_pose (x/y) --> EKF <-- /RosAria/odom_ (vx, wz)
+                                             |
+                                    /odometry/filtered
+                                             |
+                                        Pure Pursuit <-- /navigation/test_path
+                                             |
+                                     /RosAria/cmd_vel
+                                             |
+                                         Gazebo P3DX
 ```
 
-The dashed link between `/odometry/filtered` and Pure Pursuit is the
-integration step described in [Next Milestone](#next-milestone). Today, Pure
-Pursuit is validated only against `/base_pose_ground_truth`.
+Ground truth represents the physical simulated state needed to synthesize the
+optical sensor measurement. The estimator/controller receives only derived VLP
+measurements and wheel odometry: there is no ground-truth pose fallback or
+continuous ground-truth correction of position or heading.
+
+ANN supplies x/y, **not absolute yaw**; its identity quaternion is not a heading
+measurement. The EKF uses the known spawn yaw as a fixed initial condition;
+subsequent heading propagation uses wheel angular velocity. VLP position updates
+can affect the fused state through EKF correlations, but provide no independent
+yaw observation. All accepted runs used the same fixed spawn prior:
+x=2.136593 m, y=1.633511 m, yaw=-0.278154 rad.
+
+The Experiment C launch sets `base_link_frame=base_link_d` and EKF frequency to
+10 Hz, matching wheel odometry/TF. The EKF publishes `map → odom`; simulation
+publishes `odom → base_link_d`. No artificial static transform was added.
+`fake_localization` is disabled for this experiment. Other launch defaults are
+preserved; DWA, move_base, teleop and physical drivers are not started by it.
 
 ---
 
@@ -108,7 +107,8 @@ Uses the standard ROS `robot_localization` package
 - **odometry velocity** (`/RosAria/odom_`: linear x, angular z only);
 - **ANN/VLP position** (`/ann_pose`: x, y only).
 
-Output: `/odometry/filtered`, `map → base_link` in a 2D-mode configuration.
+Output in Experiment C: `/odometry/filtered`, `map → base_link_d` in 2D mode.
+The experiment overrides the shared YAML base frame and frequency in its launch.
 
 ### 4. Pure Pursuit Controller (`ros_ws/src/pure_pursuit`)
 
@@ -140,7 +140,7 @@ development. Not part of the runtime system.
 
 ## Experiments & Results
 
-### A. Pure Pursuit vs. ground truth (controller-only validation)
+### Experiment A — Pure Pursuit using Gazebo ground truth
 
 Full results and methodology in
 [`ros_ws/src/pure_pursuit/README.md`](ros_ws/src/pure_pursuit/README.md).
@@ -154,7 +154,7 @@ Summary:
 Both use `/base_pose_ground_truth` as the pose source — **not** the fused
 VLP+EKF estimate.
 
-### B. VLP+EKF localization accuracy vs. ground truth (localization-only validation)
+### Experiment B — VLP+EKF localization under manual teleoperation
 
 Data: `ros_ws/src/nav/scripts/gt_gazebo.json` / `position.json` (1417
 synchronized samples, ~159 s), collected with the robot under **manual
@@ -171,66 +171,67 @@ teleoperation** (`teleop_twist_keyboard`), comparing `/odometry/filtered`
 
 ![VLP+EKF vs ground truth](ros_ws/src/nav/scripts/resultado.png)
 
-**What this does and does not show:** this validates that the VLP+EKF
-pipeline tracks the robot's true position with sub-meter accuracy under
-manual driving, drifting less than raw odometry would over the same path.
-It does **not** yet show closed-loop autonomous navigation using this
-estimate — that is the next milestone.
+Experiment B measures localization under manual driving. It is not a
+closed-loop controller evaluation and does not by itself establish reduced drift
+relative to raw odometry. Its metrics are kept separate from Experiments A and C.
 
----
+### Experiment C — closed-loop Pure Pursuit using VLP+EKF
 
-## Next Milestone — Closing the Loop (Experiment C)
+Closed-loop VLP/EKF-based navigation was demonstrated in Gazebo on the same
+Interlagos reference geometry (~30.75 m). Each run restarted Gazebo, P3DX,
+VLP/ANN, EKF and Pure Pursuit with the same spawn prior and controller parameters.
+The controller used `/odometry/filtered`, a 0.7 m lookahead, linear velocity
+limited to 0.2 m/s, angular velocity limited to 1 rad/s, and a 20 Hz control loop.
+The EKF and wheel odometry operated at 10 Hz.
 
-Run the Pure Pursuit controller with `/odometry/filtered` (VLP+EKF) as its
-`pose_topic`, instead of `/base_pose_ground_truth`, on the same Interlagos
-benchmark already validated in Experiment A, so all three experiments are
-directly comparable:
+- **Tracking error:** physical ground-truth position versus reference path
+  segments, using the minimum 2D point-to-segment distance.
+- **Localization error:** EKF position versus ground truth, with the EKF
+  interpolated at ground-truth timestamps within common coverage; no extrapolation.
+- **Heading error:** wrapped EKF-versus-ground-truth yaw difference.
+- **Aggregate:** mean ± **sample standard deviation** (`ddof=1`) of the three
+  per-run metrics, not pooled-sample RMSE or a confidence interval.
 
-| Experiment | Pose used by the controller | Status |
-|---|---|---|
-| A — Controller-only | Ground truth | ✅ Done |
-| B — Localization-only | N/A (VLP+EKF measured under manual teleoperation) | ✅ Done |
-| **C — Closed loop** | **VLP+EKF (`/odometry/filtered`)** | 🔜 **This is what remains** |
+| Run | Physical distance (m) | Final position error (cm) | Tracking RMSE (cm) | Localization RMSE (cm) | Heading RMSE (deg) |
+|---|---:|---:|---:|---:|---:|
+| run_01 | 30.812 | 8.47 | 10.59 | 12.47 | 3.38 |
+| run_02 | 30.797 | 4.84 | 10.06 | 13.01 | 4.67 |
+| run_03 | 31.196 | 14.47 | 10.95 | 13.07 | 3.37 |
 
-### What is required to run Experiment C
+**Tracking RMSE: 10.535 ± 0.452 cm.**
 
-1. **A combined launch file.** Neither existing launch chains the other:
-   `pure_pursuit/launch/simulation_control.launch` starts the controller and
-   path publisher but not VLP/EKF; `nav/launch/robot_nav.launch` starts
-   VLP/EKF but not the controller. A new launch must include: world + robot
-   spawn, `vlp/launch/vlp.launch`, the `ekf_localization_node` (using
-   `nav/config/ekf.yaml`), the path publisher, and
-   `pure_pursuit/launch/pure_pursuit.launch` with `pose_topic` overridden to
-   `/odometry/filtered`.
-2. **Verify `frame_id` compatibility before trusting any result.** This is
-   the most likely silent failure: if `/odometry/filtered` and
-   `/navigation/test_path` don't report the same `frame_id`, the controller
-   enters `state="frame_mismatch"` and commands zero velocity with no error
-   message. Check with `rostopic echo <topic>/header/frame_id` on both
-   before running the full experiment.
-3. **Verify whether `robot_localization` needs a TF link.** `ann_pose` is
-   already published directly in the `map` frame and the odometry input is
-   configured to contribute velocity only, specifically to avoid requiring a
-   TF tree — but if `ekf_localization_node` still logs a TF lookup failure,
-   add a minimal identity `static_transform_publisher` (`map` → `odom`)
-   rather than reworking the architecture.
-4. **Adapt the logging/validation script.** `validate_simulation.py` only
-   compares against `/base_pose_ground_truth` and assumes Pure Pursuit is
-   the sole `cmd_vel` publisher; it does not currently log the fused
-   estimate the controller is actually using. Extend it (or adapt
-   `nav/scripts/analysis.py`, which already computes MAE/RMSE between two
-   pose series) to log ground truth, `/odometry/filtered`, and tracking
-   error together.
-5. **Run it more than once.** Experiments A and B are each a single run
-   (N=1); do not repeat that limitation here. Run the closed loop at least
-   3 times and report mean ± standard deviation of tracking error, plus how
-   often the run completed without hitting `frame_mismatch` or
-   `stale_pose`.
+**Localization RMSE: 12.853 ± 0.329 cm.**
 
-> **[EVIDENCE NEEDED]** Until Experiment C exists, do not describe this
-> project as demonstrating "autonomous VLP-based navigation" — the correct,
-> currently-supportable claim is "independently validated localization and
-> control subsystems for VLP-based indoor navigation."
+Three runs satisfying the predefined integrity criteria were used for the
+aggregate result. In the final 10 Hz configuration, one additional complete
+lap was rejected because the ANN stream exhibited a **3.3 s data gap**.
+Thus, four complete laps were observed: three accepted and one rejected.
+The cause of that delay was not established, and no threshold was increased to
+accept it. Earlier diagnostic/aborted attempts are excluded as well.
+
+Acceptance required compatible frames and valid samples, monotonic sensor
+timestamps, bounded data gaps (GT/EKF 0.2 s, wheel odometry 0.3 s, ANN 2 s,
+commands/status 0.2 s), and complete interval coverage. The accepted bags contain
+no `frame_mismatch` or `stale_pose` states, and their distinct hashes and matching
+parameters are recorded in the publication audit.
+
+Physical completion required ordered path progress of 95–105%, physical distance
+of 85–115% of the reference, final position within 0.5 m, and controller
+completion. `reached` alone was insufficient. After braking, a 3 s window required
+zero Twist, physical speed below 0.01 m/s, angular speed below 0.02 rad/s, and
+displacement below 0.03 m. At 50 Hz, the first/last samples span 2.98 s; recording
+continued for six seconds after `reached`. Completion checks position and stop,
+not final orientation. Runtime checks verified Pure Pursuit as the sole command
+publisher and Gazebo as the control recipient.
+
+[Aggregate JSON](ros_ws/src/pure_pursuit/results/closed_loop/validated_10hz/aggregate_summary.json) · [Publication audit](ros_ws/src/pure_pursuit/results/closed_loop/validated_10hz/publication_audit.json)
+
+![Experiment C, run 01: physical and estimated trajectories](ros_ws/src/pure_pursuit/results/closed_loop/validated_10hz/run_01/analysis/trajectory.png)
+
+Per-run summaries, useful CSV samples, tracking/localization plots, sanitized
+provenance and TF audits are included. Raw bags and logs remain local; bag hashes
+preserve traceability. No equivalent repeated statistical comparison with the
+historical single-run Experiments A/B is claimed.
 
 ---
 
@@ -307,25 +308,57 @@ roslaunch nav robot_nav.launch
 Pure Pursuit controller-only validation (as used in Experiment A): see
 [`ros_ws/src/pure_pursuit/README.md`](ros_ws/src/pure_pursuit/README.md).
 
+Experiment C (Gazebo only; run from the `ros_ws` directory after sourcing the
+workspace). The runner owns the launches, stabilizes localization, verifies the
+command graph, records the bag and shuts down its children. Start with no other
+ROS master. Use a **new output directory** for every run; published results must
+not be overwritten.
+
+```bash
+timeout --signal=INT --kill-after=20s 640s python3 -u -B \
+  src/pure_pursuit/scripts/run_closed_loop_experiment.py \
+  --output /tmp/experiment_c_new_run
+
+python3 -B src/pure_pursuit/scripts/analyze_closed_loop.py \
+  /tmp/experiment_c_new_run/closed_loop.bag \
+  --provenance /tmp/experiment_c_new_run/provenance.json \
+  --output /tmp/experiment_c_new_run/analysis
+```
+
+The offline tools additionally require ROS `rosbag`, `diagnostic_msgs`, NumPy and
+Matplotlib. The analyzer's standalone tests use `rosgraph_msgs` and `tf2_msgs`.
+The runtime controller does not depend on Matplotlib. Use `--validation-only`
+with a new directory for the stationary/short-motion prerequisite; it does not
+start the full Pure Pursuit circuit.
+
+Validation already completed in the original experimental workspace: affected
+package build, **13 ROS test results with no errors/failures**, and **9 analyzer
+tests passing**. No experiments were repeated while preparing this publication.
+
+
 ---
 
 ## Current Limitations
 
-- Pure Pursuit and VLP+EKF have not been run together in closed loop —
-  see [Next Milestone](#next-milestone-closing-the-loop-experiment-c) for
-  the exact steps remaining.
-- The ANN's standalone accuracy (pre-fusion) and its training procedure are
-  not documented in this repository.
-- Radiance installation is not scripted; Python dependency versions are
-  pinned in `requirements.txt` but not yet confirmed end-to-end in this
-  project's ROS Noetic environment.
-- The VLP+EKF experiment (B) is a single run under manual teleoperation;
-  no repeated trials or statistical variance are reported yet — the same
-  should be avoided for Experiment C (see Next Milestone, step 5).
-- `pure_pursuit/patches/p3dx_control.patch` is superseded now that `p3dx`
-  is vendored with the patch already applied directly — safe to remove
-  once confirmed unused elsewhere.
-- No physical-hardware validation; everything above is simulation-only.
+- All results are from simulation; no physical or real-world validation exists.
+- ANN supplies no independent absolute heading. Yaw depends on the known initial
+  spawn condition and wheel odometry; ground truth does not continuously correct it.
+- One additional complete lap at 10 Hz was rejected for a 3.3 s ANN data gap.
+  These results do not demonstrate robustness to sensor dropout or recovery.
+- Only three accepted runs form the aggregate. Experiments A/B have no equivalent
+  repeated statistical comparison; their historical metrics must not be pooled with C.
+- Arrival validates position and stopping, not final orientation. Pure Pursuit
+  does not provide obstacle avoidance or global planning.
+- `/RosAria/odom_` retains an `odom` header despite its spawn-offset pose. The EKF
+  uses only its body-frame twist; do not enable absolute pose fusion without
+  resolving that frame semantics. The original `base_link` description/ground-truth
+  frame was not renamed or artificially linked to `base_link_d`.
+- ANN training data/procedure and standalone pre-fusion accuracy remain undocumented.
+- Radiance installation is not scripted. Pinned Python dependencies and the clean
+  checkout have not undergone a fresh end-to-end installation test. Complete ROS
+  tests were run in the experimental workspace, not in a new container.
+- The historical P3DX patch is retained for review; its functional changes are
+  vendored directly and it must not be reapplied to this checkout.
 
 ---
 

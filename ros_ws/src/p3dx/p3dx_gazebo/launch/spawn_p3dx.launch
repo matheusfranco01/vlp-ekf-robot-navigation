@@ -6,6 +6,7 @@
   <arg name="initial_pose_x" default="5.0"/>
   <arg name="initial_pose_y" default="5.0"/>
   <arg name="initial_pose_a" default="0.0"/>
+  <arg name="enable_fake_localization" default="true"/>
 
   <param name="robot_description" command="$(find xacro)/xacro '$(find p3dx_description)/urdf/p3dx.xacro'" />
   <include file="$(find p3dx_description)/launch/description.launch" />
@@ -21,6 +22,7 @@
   </node>
 
   <include file="$(find p3dx_control)/launch/control.launch">
+    <arg name="enable_fake_localization" value="$(arg enable_fake_localization)"/>
     <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
     <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
     <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>

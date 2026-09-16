@@ -1,0 +1,42 @@
+{
+  "completed": [
+    true,
+    true,
+    true
+  ],
+  "bag_sha256": [
+    "9e3b00dcbdbbb5661ab32738fd8bfa3c954f745af252d2206800bf8e6ef4925b",
+    "e0f57dda62f9b655796a6ebb9731c23f184f1680a8ecab42550d0e1f188de834",
+    "cf1b6a89f4fb16980b8c86e2c2f719f593533861b7075a4099bb67b799dea65e"
+  ],
+  "same_initial_state": true,
+  "same_ekf_parameters": true,
+  "same_controller_parameters": true,
+  "aggregate_exact": true,
+  "controller_parameters": {
+    "pose_topic": "/odometry/filtered",
+    "path_topic": "/navigation/test_path",
+    "cmd_vel_topic": "/RosAria/cmd_vel",
+    "look_ahead_distance": 0.7,
+    "linear_speed": 0.2,
+    "max_angular_speed": 1.0,
+    "control_rate": 20.0,
+    "goal_tolerance": 0.1,
+    "pose_timeout": 0.5
+  },
+  "status_counts": {
+    "run_01": {
+      "tracking": 3051,
+      "reached": 121
+    },
+    "run_02": {
+      "tracking": 3047,
+      "reached": 121
+    },
+    "run_03": {
+      "tracking": 3089,
+      "reached": 121
+    }
+  },
+  "source_bags_distributed": false
+}

@@ -11,6 +11,7 @@
   <arg name="initial_pose_x" default="5.0"/>
   <arg name="initial_pose_y" default="5.0"/>
   <arg name="initial_pose_a" default="0.0"/>
+  <arg name="enable_fake_localization" default="true"/>
 
   <env name="GAZEBO_MODEL_PATH" value="$(find my_worlds)/models:$(optenv GAZEBO_MODEL_PATH)"/>
 
@@ -21,6 +22,7 @@
   <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" if="$(arg gui)"/>
 
   <include file="$(find p3dx_gazebo)/launch/spawn_p3dx.launch">
+    <arg name="enable_fake_localization" value="$(arg enable_fake_localization)"/>
     <arg name="initial_pose_x" value="$(arg initial_pose_x)" />
     <arg name="initial_pose_y" value="$(arg initial_pose_y)" />
     <arg name="initial_pose_a" value="$(arg initial_pose_a)" />

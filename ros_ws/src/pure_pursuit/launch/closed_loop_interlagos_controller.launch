@@ -1,0 +1,9 @@
+<launch>
+  <!-- Pure Pursuit driven by the fused VLP+EKF estimate -->
+
+  <include file="$(find pure_pursuit)/launch/pure_pursuit.launch">
+    <arg name="pose_topic" value="/odometry/filtered"/>
+    <arg name="path_topic" value="/navigation/test_path"/>
+    <arg name="cmd_vel_topic" value="/RosAria/cmd_vel"/>
+  </include>
+</launch>

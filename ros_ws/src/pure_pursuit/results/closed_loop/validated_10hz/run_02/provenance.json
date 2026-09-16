@@ -1,0 +1,250 @@
+{
+  "graph_passed": true,
+  "graph_checks": 161,
+  "stationary": {
+    "ground_truth": [
+      2.1351407335313106,
+      1.6326185626545846,
+      -0.2831183453338386
+    ],
+    "ekf": [
+      2.0986530399359555,
+      1.6541412478601674,
+      -0.2786237708620676
+    ],
+    "position_error_m": 0.04236245699162322,
+    "yaw_error_deg": 0.25752014793972194
+  },
+  "initial_state": [
+    2.136593,
+    1.633511,
+    0,
+    0,
+    0,
+    -0.278154,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "ekf_inputs": [
+    "/RosAria/odom_",
+    "/ann_pose"
+  ],
+  "ekf_parameters": {
+    "frequency": 10,
+    "sensor_timeout": 0.1,
+    "two_d_mode": true,
+    "transform_time_offset": 0.0,
+    "transform_timeout": 0.0,
+    "print_diagnostics": true,
+    "debug": false,
+    "publish_tf": true,
+    "publish_acceleration": false,
+    "map_frame": "map",
+    "odom_frame": "odom",
+    "base_link_frame": "base_link_d",
+    "world_frame": "map",
+    "odom0": "/RosAria/odom_",
+    "odom0_config": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false
+    ],
+    "odom0_queue_size": 10,
+    "odom0_nodelay": false,
+    "odom0_differential": false,
+    "odom0_relative": false,
+    "pose0": "/ann_pose",
+    "pose0_config": [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "pose0_differential": false,
+    "pose0_relative": false,
+    "initial_state": [
+      2.136593,
+      1.633511,
+      0,
+      0,
+      0,
+      -0.278154,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "fake_localization_absent": true,
+  "last_graph": {
+    "publishers": [
+      [
+        "/tf",
+        [
+          "/ekf_se",
+          "/gazebo",
+          "/robot_state_publisher"
+        ]
+      ],
+      [
+        "/tf_static",
+        [
+          "/robot_state_publisher"
+        ]
+      ],
+      [
+        "/odometry/filtered",
+        [
+          "/ekf_se"
+        ]
+      ],
+      [
+        "/RosAria/odom_",
+        [
+          "/odom_shifter_node"
+        ]
+      ],
+      [
+        "/navigation/test_path",
+        [
+          "/interlagos_path_publisher"
+        ]
+      ],
+      [
+        "/ann_pose",
+        [
+          "/ann_node"
+        ]
+      ],
+      [
+        "/base_pose_ground_truth",
+        [
+          "/gazebo"
+        ]
+      ],
+      [
+        "/RosAria/cmd_vel",
+        [
+          "/pure_pursuit"
+        ]
+      ]
+    ],
+    "subscribers": [
+      [
+        "/tf",
+        [
+          "/ekf_se",
+          "/rosbag_recorder"
+        ]
+      ],
+      [
+        "/tf_static",
+        [
+          "/ekf_se",
+          "/rosbag_recorder"
+        ]
+      ],
+      [
+        "/RosAria/odom_",
+        [
+          "/closed_loop_observer",
+          "/ekf_se",
+          "/rosbag_recorder"
+        ]
+      ],
+      [
+        "/ann_pose",
+        [
+          "/closed_loop_observer",
+          "/ekf_se",
+          "/rosbag_recorder"
+        ]
+      ],
+      [
+        "/base_pose_ground_truth",
+        [
+          "/closed_loop_observer",
+          "/estimator_node",
+          "/rosbag_recorder"
+        ]
+      ],
+      [
+        "/odometry/filtered",
+        [
+          "/closed_loop_observer",
+          "/pure_pursuit",
+          "/rosbag_recorder"
+        ]
+      ],
+      [
+        "/RosAria/cmd_vel",
+        [
+          "/closed_loop_observer",
+          "/gazebo",
+          "/rosbag_recorder"
+        ]
+      ],
+      [
+        "/navigation/test_path",
+        [
+          "/pure_pursuit",
+          "/rosbag_recorder"
+        ]
+      ]
+    ]
+  },
+  "pose_topic": "/odometry/filtered",
+  "all_children_stopped": true,
+  "source_bag_sha256": "e0f57dda62f9b655796a6ebb9731c23f184f1680a8ecab42550d0e1f188de834",
+  "publication_notes": [
+    "Bag omitted; SHA-256 identifies the original recording.",
+    "Graph restricted to experimental topics; recorder timestamp normalized.",
+    "Unused debug output path omitted; numerical results and EKF/control inputs unchanged."
+  ],
+  "controller_parameters": {
+    "pose_topic": "/odometry/filtered",
+    "path_topic": "/navigation/test_path",
+    "cmd_vel_topic": "/RosAria/cmd_vel",
+    "look_ahead_distance": 0.7,
+    "linear_speed": 0.2,
+    "max_angular_speed": 1.0,
+    "control_rate": 20.0,
+    "goal_tolerance": 0.1,
+    "pose_timeout": 0.5
+  }
+}

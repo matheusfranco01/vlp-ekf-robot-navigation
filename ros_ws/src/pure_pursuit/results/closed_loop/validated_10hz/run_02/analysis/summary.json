@@ -1,0 +1,52 @@
+{
+  "bag": "run_02/closed_loop.bag",
+  "completed": true,
+  "failures": [],
+  "initial_state": [
+    2.136593,
+    1.633511,
+    0,
+    0,
+    0,
+    -0.278154,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "filter_frequency_hz": 10,
+  "duration_s": 157.868,
+  "reference_length_m": 30.748846948967394,
+  "travelled_distance_m": 30.79661768330429,
+  "physical_progress_m": 30.738413276016175,
+  "final_distance_to_start_m": 0.04835434184445837,
+  "tracking_error": {
+    "mean_m": 0.08192120787188135,
+    "rmse_m": 0.100566077630503,
+    "max_m": 0.24105936423915744
+  },
+  "localization_error": {
+    "mean_m": 0.1191802003234166,
+    "rmse_m": 0.13014665507450907,
+    "max_m": 0.26819853463074883
+  },
+  "heading_rmse_deg": 4.670829827727191,
+  "max_command_linear_m_s": 0.2,
+  "max_command_angular_rad_s": 0.5334757694023893,
+  "stop_duration_s": 2.9799999999999898,
+  "initial_ground_truth": [
+    2.1350184176929154,
+    1.6325028624295763,
+    -0.28360566728764747
+  ],
+  "final_ground_truth": [
+    2.107354628482434,
+    1.5949981974464733,
+    -0.9129380597191713
+  ]
+}

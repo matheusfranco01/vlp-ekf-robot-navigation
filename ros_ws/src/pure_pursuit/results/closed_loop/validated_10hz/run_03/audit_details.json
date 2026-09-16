@@ -1,0 +1,41 @@
+{
+  "topics": {
+    "/base_pose_ground_truth": {
+      "samples": 8277,
+      "max_gap_s": 0.020000000000010232
+    },
+    "/RosAria/odom_": {
+      "samples": 1655,
+      "max_gap_s": 0.10000000000002274
+    },
+    "/odometry/filtered": {
+      "samples": 1655,
+      "max_gap_s": 0.10000000000002274
+    },
+    "/ann_pose": {
+      "samples": 597,
+      "max_gap_s": 0.740000000000002
+    }
+  },
+  "tf_authorities": [
+    [
+      "map",
+      "odom",
+      "/ekf_se"
+    ],
+    [
+      "odom",
+      "base_link_d",
+      "/gazebo"
+    ]
+  ],
+  "nonzero_diagnostics": [],
+  "command_publishers": [
+    "/pure_pursuit"
+  ],
+  "hold_max_linear_speed_m_s": 3.89918555405652e-05,
+  "hold_max_angular_speed_rad_s": 2.062194283990523e-05,
+  "hold_max_displacement_m": 0.00011495413537845013,
+  "runtime_graph_checks": 163,
+  "all_children_stopped": true
+}
